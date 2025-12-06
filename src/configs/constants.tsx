@@ -1,3 +1,10 @@
+"use client"
+
+import {atom} from "jotai"
+
+export const activeSideBarItem = atom<string>("/dashboard")
+
+
 export const navItems: NavItemsTypes[] = [
   {
     title: "Home",
