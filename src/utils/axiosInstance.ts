@@ -34,7 +34,8 @@ const PUBLIC_ROUTES = [
   '/signup',
   '/forgot-password',
   '/reset-password',
-  '/verify-email'
+  '/verify-email',
+  '/dashboard'
 ];
 
 const isPublicRoute = (): boolean => {
