@@ -48,7 +48,7 @@ const Header = () => {
                   <div>
                     <span className="block font-medium">Hello,</span>
                     <span className="block font-semibold">
-                      {user?.name?.split(" ")[0]}
+                      {user?.name?.split(" ")[1]}
                     </span>
                   </div>
                 </Link>

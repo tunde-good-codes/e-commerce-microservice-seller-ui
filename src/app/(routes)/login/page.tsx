@@ -30,39 +30,30 @@ const Login = () => {
 
 
 
-  const loginMutation = useMutation({
-  mutationFn: async (data: FormData) => {
-    // Use axiosInstance instead of axios
-    const response = await axiosInstance.post('/auth/login-seller', data);
+// In your login page/component
+const loginMutation = useMutation({
+  mutationFn: async (credentials: { email: string; password: string }) => {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_URI}/auth/login-seller`,
+      credentials,
+      { withCredentials: true }
+    );
     return response.data;
   },
   onSuccess: (data) => {
-    // Store tokens if they're in the response
+    // ✅ Store the access token
     if (data.accessToken) {
       localStorage.setItem('accessToken', data.accessToken);
-    }
-    if (data.refreshToken) {
-      localStorage.setItem('refreshToken', data.refreshToken);
-    }
-    
-    // Set default Authorization header
-    if (data.accessToken) {
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
     }
     
-    toast.success("Login successful! Redirecting...");
-    router.push("/");
+    toast.success("Login successful!");
+    router.push('/dashboard');
   },
   onError: (error: any) => {
-    // Clear any stored tokens on error
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    
-    const errorMessage = error.response?.data?.message || "Login failed.";
-    toast.error(errorMessage);
+    toast.error(error.response?.data?.message || "Login failed");
   },
 });
-
   const onSubmit = (data: FormData) => {
     const loadingToast = toast.loading("Signing you in...");
     

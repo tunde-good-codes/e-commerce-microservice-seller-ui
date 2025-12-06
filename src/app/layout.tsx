@@ -32,7 +32,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${roboto.variable} ${poppins.variable}`}>
         <Providers>
-          <Header />
           {children}
         </Providers>
       </body>

@@ -35,7 +35,6 @@ const PUBLIC_ROUTES = [
   '/forgot-password',
   '/reset-password',
   '/verify-email',
-  '/dashboard'
 ];
 
 const isPublicRoute = (): boolean => {
@@ -113,7 +112,7 @@ axiosInstance.interceptors.response.use(
     
     // Skip refresh endpoint to avoid loops
     if (originalRequest.url?.includes('/auth/refresh-token') || 
-        originalRequest.url?.includes('/auth/login') ||
+        originalRequest.url?.includes('/auth/login-seller') ||
         originalRequest.url?.includes('/auth/signup') ||
         originalRequest.url?.includes('/auth/logout')) {
       handleLogout();
