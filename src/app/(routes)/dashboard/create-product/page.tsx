@@ -1,4 +1,7 @@
 "use client";
+import ColorSelector from "@/shared/components/dashboard/color-selector/ColorSelector";
+import ColorSpecification from "@/shared/components/dashboard/color-specification/ColorSpecification";
+import CustomProperties from "@/shared/components/dashboard/custom-properties/CustomProperties";
 import ImagePlaceHolder from "@/shared/components/dashboard/image-placeholder/Page";
 import Input from "@/shared/components/input/Input";
 import { ChevronRight } from "lucide-react";
@@ -148,8 +151,7 @@ const Page = () => {
                   label="Warranty *"
                   placeholder="1 Year or no warranty"
                   {...register("warranty", {
-                    required:
-                      "Warranty is required",
+                    required: "Warranty is required",
                   })}
                 />
 
@@ -164,8 +166,7 @@ const Page = () => {
                   label="Slug *"
                   placeholder="product_slug"
                   {...register("slug", {
-                    required:
-                      "slug is required",
+                    required: "slug is required",
                   })}
                 />
 
@@ -180,8 +181,7 @@ const Page = () => {
                   label="Brand *"
                   placeholder="product brand"
                   {...register("brand", {
-                    required:
-                      "brand is required",
+                    required: "brand is required",
                   })}
                 />
 
@@ -191,6 +191,18 @@ const Page = () => {
                   </p>
                 )}
               </div>
+
+              <div className="mt-2">
+                <ColorSelector control={control} errors={errors} />
+              </div>
+              
+              <div className="mt-2">
+                <ColorSpecification control={control} errors={errors} />
+              </div>
+              <div className="mt-2">
+                <CustomProperties control={control} errors={errors} />
+              </div>
+
             </div>
           </div>
         </div>
