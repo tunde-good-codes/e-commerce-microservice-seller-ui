@@ -3,6 +3,7 @@ import ColorSelector from "@/shared/components/dashboard/color-selector/ColorSel
 import ColorSpecification from "@/shared/components/dashboard/color-specification/ColorSpecification";
 import CustomProperties from "@/shared/components/dashboard/custom-properties/CustomProperties";
 import ImagePlaceHolder from "@/shared/components/dashboard/image-placeholder/Page";
+import RichTextEditor from "@/shared/components/dashboard/rich-text-editor";
 import Input from "@/shared/components/input/Input";
 import axiosInstance from "@/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
@@ -73,12 +74,11 @@ const Page = () => {
   const subCategoriesData = data?.subCategories || [];
   const selectedCategory = watch("categories");
   const regularPrice = watch("regular_price");
-console.log(subCategoriesData, categories);
+  console.log(subCategoriesData, categories);
 
-
-const subCategories = useMemo(()=>{
-return selectedCategory ? subCategoriesData[selectedCategory] || [] : []
-},[selectedCategory, subCategoriesData])
+  const subCategories = useMemo(() => {
+    return selectedCategory ? subCategoriesData[selectedCategory] || [] : [];
+  }, [selectedCategory, subCategoriesData]);
 
   return (
     <form
@@ -336,12 +336,48 @@ return selectedCategory ? subCategoriesData[selectedCategory] || [] : []
                   )}
                 />
 
-                
-              {errors.subCategory && (
-                <p className="text-red-500 text-sm mt-1">
-                  {String(errors.subCategory.message)}
-                </p>
-              )}
+                {errors.subCategory && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {String(errors.subCategory.message)}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-2">
+                <label
+                  htmlFor=""
+                  className="block font-semibold text-gray-300 mb-1 "
+                >
+                  Detailed description *{" "}
+                </label>
+
+                <Controller
+                  name="detailed_description"
+                  control={control}
+                  rules={{
+                    required: "detailed description  is required",
+                    validate: (value) => {
+                      const wordCount = value.trim().split(/\s+/).length;
+
+                      return (
+                        wordCount >= 100 ||
+                        `Description cannot exceeds 150 words: (current:${wordCount} )`
+                      );
+                    },
+                  }}
+                  render={({ field }) => (
+               
+                    <RichTextEditor value={field.value} onChange={field.onChange} />
+
+
+                  )}
+                />
+
+                {errors.subCategory && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {String(errors.subCategory.message)}
+                  </p>
+                )}
               </div>
             </div>
           </div>
