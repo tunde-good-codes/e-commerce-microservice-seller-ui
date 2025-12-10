@@ -4,6 +4,7 @@ import ColorSpecification from "@/shared/components/dashboard/color-specificatio
 import CustomProperties from "@/shared/components/dashboard/custom-properties/CustomProperties";
 import ImagePlaceHolder from "@/shared/components/dashboard/image-placeholder/Page";
 import RichTextEditor from "@/shared/components/dashboard/rich-text-editor";
+import SizeSelector from "@/shared/components/dashboard/size-selector";
 import Input from "@/shared/components/input/Input";
 import axiosInstance from "@/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
@@ -366,16 +367,66 @@ const Page = () => {
                     },
                   }}
                   render={({ field }) => (
-               
-                    <RichTextEditor value={field.value} onChange={field.onChange} />
-
-
+                    <RichTextEditor
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   )}
                 />
 
-                {errors.subCategory && (
+                {errors.detailed_description && (
                   <p className="text-red-500 text-sm mt-1">
-                    {String(errors.subCategory.message)}
+                    {String(errors.detailed_description.message)}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-4">
+                <Input label="video url" placeholder="https://youtube.com" />
+                {errors.video_url && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {String(errors.video_url.message)}
+                  </p>
+                )}
+              </div>
+
+
+              <div className="mt-4">
+                <Input label="Regular price" placeholder="$20" />
+                {errors.regular_price && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {String(errors.regular_price.message)}
+                  </p>
+                )}
+              </div>
+
+
+
+              <div className="mt-4">
+                <Input label="Sale  price" placeholder="$20" />
+                {errors.sale_price && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {String(errors.sale_price.message)}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-4">
+                <Input label="Stock  price" placeholder="$20" />
+                {errors.stock && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {String(errors.stock.message)}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-2">
+                
+                <SizeSelector errors={errors} control={control} />
+                
+                {errors.stock && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {String(errors.stock.message)}
                   </p>
                 )}
               </div>
