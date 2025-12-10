@@ -4,9 +4,11 @@ import ColorSpecification from "@/shared/components/dashboard/color-specificatio
 import CustomProperties from "@/shared/components/dashboard/custom-properties/CustomProperties";
 import ImagePlaceHolder from "@/shared/components/dashboard/image-placeholder/Page";
 import Input from "@/shared/components/input/Input";
+import axiosInstance from "@/utils/axiosInstance";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 const Page = () => {
   const [openImageModal, setOpenImageModal] = useState(false);
@@ -52,6 +54,32 @@ const Page = () => {
     });
     setValue("images", images);
   };
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      try {
+        const res = await axiosInstance.get("/product/get-categories");
+        return res.data;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    staleTime: 1000 * 60 * 50,
+    retry: 2,
+  });
+
+  const categories = data?.categories || [];
+  const subCategoriesData = data?.subCategories || [];
+  const selectedCategory = watch("categories");
+  const regularPrice = watch("regular_price");
+console.log(subCategoriesData, categories);
+
+
+const subCategories = useMemo(()=>{
+return selectedCategory ? subCategoriesData[selectedCategory] || [] : []
+},[selectedCategory, subCategoriesData])
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -195,14 +223,126 @@ const Page = () => {
               <div className="mt-2">
                 <ColorSelector control={control} errors={errors} />
               </div>
-              
+
               <div className="mt-2">
                 <ColorSpecification control={control} errors={errors} />
               </div>
               <div className="mt-2">
                 <CustomProperties control={control} errors={errors} />
               </div>
+              <div className="mt-2">
+                <label
+                  htmlFor=""
+                  className="font-semibold block text-gray-300 mb-1"
+                >
+                  Cash On Delivery
+                </label>
 
+                <select
+                  {...register("cash_on_delivery", {
+                    required: "Cash on delivery",
+                  })}
+                  name=""
+                  id=""
+                  defaultValue={"yes"}
+                  className="w-full border outline-none border-gray-700 bg-transparent  "
+                >
+                  <option value="yes" className="bg-black">
+                    {" "}
+                    Yes{" "}
+                  </option>
+                  <option value="no" className="bg-black">
+                    {" "}
+                    No{" "}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div className="w-2/4">
+              <label
+                htmlFor=""
+                className="block font-semibold mb-1 text-gray-500 "
+              >
+                Category *
+              </label>
+              {isLoading ? (
+                <p className="text-gray-400">Loading ....</p>
+              ) : isError ? (
+                <p className="text-red-500">Failed to load categories</p>
+              ) : (
+                <Controller
+                  name="category"
+                  control={control}
+                  rules={{ required: "category is required" }}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      className="w-full border outline-none border-gray-700 bg-transparent"
+                    >
+                      <option value="" className="bg-black">
+                        Select Category
+                      </option>
+                      {categories.map((category: string) => (
+                        <option
+                          value={category}
+                          key={category}
+                          className="bg-black"
+                        >
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
+              )}
+
+              {errors.category && (
+                <p className="text-red-500 text-sm mt-1">
+                  {String(errors.category.message)}
+                </p>
+              )}
+
+              <div className="mt-2">
+                <label
+                  htmlFor=""
+                  className="block font-semibold text-gray-300 mb-1 "
+                >
+                  Sub Category *
+                </label>
+
+                <Controller
+                  name="category"
+                  control={control}
+                  rules={{ required: "category is required" }}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      className="w-full border outline-none border-gray-700 bg-transparent"
+                    >
+                      <option value="" className="bg-black">
+                        Select Category
+                      </option>
+                      {subCategories.map((subCat: string) => (
+                        <option
+                          value={subCat}
+                          key={subCat}
+                          className="bg-black"
+                        >
+                          {subCat}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                />
+
+                
+              {errors.subCategory && (
+                <p className="text-red-500 text-sm mt-1">
+                  {String(errors.subCategory.message)}
+                </p>
+              )}
+              </div>
             </div>
           </div>
         </div>
