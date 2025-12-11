@@ -34,10 +34,10 @@ interface SizeOption {
 
 interface SizeSelectorProps {
   control: Control<any>;
-  name: string;
+  name?: string;
   label?: string;
   required?: boolean;
-  error?: string;
+  error?: string |any;
   sizeType?: "clothing" | "shoes" | "custom";
   customSizes?: SizeOption[];
   multiple?: boolean;
@@ -90,7 +90,7 @@ const SizeSelector: React.FC<SizeSelectorProps> = ({
       </div>
 
       <Controller
-        name={name}
+        name={name!}
         control={control}
         rules={{
           required: required ? "Please select at least one size" : false,

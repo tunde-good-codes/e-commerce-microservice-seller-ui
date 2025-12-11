@@ -56,7 +56,7 @@ const Page = () => {
     });
     setValue("images", images);
   };
-
+  const handleSaveDraft = () => {};
   const { data, isLoading, isError } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -390,7 +390,6 @@ const Page = () => {
                 )}
               </div>
 
-
               <div className="mt-4">
                 <Input label="Regular price" placeholder="$20" />
                 {errors.regular_price && (
@@ -399,8 +398,6 @@ const Page = () => {
                   </p>
                 )}
               </div>
-
-
 
               <div className="mt-4">
                 <Input label="Sale  price" placeholder="$20" />
@@ -421,9 +418,8 @@ const Page = () => {
               </div>
 
               <div className="mt-2">
-                
-                <SizeSelector errors={errors} control={control} />
-                
+                <SizeSelector error={errors} control={control} />
+
                 {errors.stock && (
                   <p className="text-red-500 text-sm mt-1">
                     {String(errors.stock.message)}
@@ -433,6 +429,30 @@ const Page = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mt-3 flex justify-end gap-3 ">
+        {isChanged && (
+          <button
+            type="button"
+            className="px-4 py-2 bg-gray-700 text-white rounded-md "
+            onClick={handleSaveDraft}
+          >
+            Save Draft
+          </button>
+        )}
+
+
+         <button
+            type="button"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md "
+            onClick={handleSaveDraft}
+            disabled={loading}
+          >
+            {loading ? "Creating..." : "Create"}
+            Save Draft
+          </button>
+       
       </div>
     </form>
   );
