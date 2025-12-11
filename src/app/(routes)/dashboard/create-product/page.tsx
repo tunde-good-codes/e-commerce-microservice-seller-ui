@@ -57,12 +57,31 @@ const Page = () => {
     setValue("images", images);
   };
   const handleSaveDraft = () => {};
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
       try {
         const res = await axiosInstance.get("/product/get-categories");
         return res.data;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    staleTime: 1000 * 60 * 50,
+    retry: 2,
+  });
+
+  const {
+    data: discount_codes = [],
+    isLoading: discountIsLoading,
+    isError: discountIsError,
+  } = useQuery({
+    queryKey: ["shop_discounts"],
+    queryFn: async () => {
+      try {
+        const res = await axiosInstance.get("/product/get-discount-codes");
+        return res.data.discount_codes || [];
       } catch (e) {
         console.log(e);
       }
@@ -426,6 +445,47 @@ const Page = () => {
                   </p>
                 )}
               </div>
+
+              <div className="mt-3">
+                <label
+                  htmlFor=""
+                  className="block font-semibold text-gray-300 mb-1"
+                >
+                  select discount codes (optional){" "}
+                </label>
+
+                {discountIsLoading ? (
+                  <p className="text-gray-400 ">Loading discount codes...</p>
+                ) : (
+                  <div className="flex flex-wrap gap-2 ">
+                    {discount_codes.map((code: any) => (
+                      <button
+                        key={code.id}
+                        type="button"
+                        className={` px-3 py-1 rounded-md text-sm font-semibold border ${
+                          watch("discountCode").includes(code?.id)
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-gray-800 text-gray-300 border-gray-600 hover:text-gray-700 "
+                        } `}
+                        onClick={() => {
+                          const currentSelection = watch("discountCode") || [];
+                          const updatedSelection = currentSelection.includes(
+                            code.id
+                          )
+                            ? currentSelection.filter(
+                                (id: string) => id !== code.id
+                              )
+                            : [...currentSelection, code.id];
+                          setValue("discountCode", updatedSelection);
+                        }}
+                      >
+                        {code?.public_name} ({code.discountValue}{" "}
+                        {code?.discountType === "percentage" ? "%" : "$"})
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -442,17 +502,15 @@ const Page = () => {
           </button>
         )}
 
-
-         <button
-            type="button"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md "
-            onClick={handleSaveDraft}
-            disabled={loading}
-          >
-            {loading ? "Creating..." : "Create"}
-            Save Draft
-          </button>
-       
+        <button
+          type="button"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md "
+          onClick={handleSaveDraft}
+          disabled={loading}
+        >
+          {loading ? "Creating..." : "Create"}
+          Save Draft
+        </button>
       </div>
     </form>
   );

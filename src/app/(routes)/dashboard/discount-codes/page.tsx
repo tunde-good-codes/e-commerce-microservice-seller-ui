@@ -1,4 +1,5 @@
 "use client";
+import DeleteDiscountModal from "@/shared/components/dashboard/modals/deleteDiscountModals";
 import Input from "@/shared/components/input/Input";
 import axiosInstance from "@/utils/axiosInstance";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
@@ -12,6 +13,8 @@ import toast from "react-hot-toast";
 
 const DiscountCodes = () => {
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedDiscount, setSelectedDiscount] = useState<any>();
 
   const {
     register,
@@ -44,18 +47,42 @@ const DiscountCodes = () => {
     staleTime: 1000 * 60 * 50,
     retry: 2,
   });
-  const handleDeleteClick = async (discount: any) => {};
+  const handleDeleteClick = async (discount: any) => {
+    setSelectedDiscount(discount);
+    setShowDeleteModal(true);
+  };
   const onSubmit = (data: any) => {
     if (discount_codes.length >= 8) {
       toast.error("you can only create 8 discount codes");
       return;
     }
+    createDiscountCodeMutation.mutate(data);
   };
 
   const createDiscountCodeMutation = useMutation({
     mutationFn: async (data) => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_URI}/product/create-discount_codes`
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["shop-discounts"],
+      });
+      setShowDeleteModal(false);
+    },
+    onError: (error: AxiosError) => {
+      const errorMessage =
+        (error?.response?.data as { message?: string })?.message ||
+        "Invalid otp. Try Again!";
+    },
+  });
+
+  const deleteDiscountCodeMutation = useMutation({
+    mutationFn: async (id) => {
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_URI}/product/delete-discount_codes/${id}`
       );
       return response.data;
     },
@@ -194,17 +221,59 @@ const DiscountCodes = () => {
                   }}
                 />
               </div>
-<Input
-                label="Discount Value" type="number"
-                {...register("public_name", {
-                  required: "Title is required",
-                })}
-              />
 
+              <div className="mt-2">
+                <Input
+                  label="Discount Value"
+                  type="number"
+                  min={1}
+                  {...register("discountValue", {
+                    required: "discount value is required",
+                  })}
+                />
+              </div>
+
+              <div className="mt-2">
+                <Input
+                  label="Discount Code"
+                  {...register("discountCode", {
+                    required: "discount Code is required",
+                  })}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={createDiscountCodeMutation.isPending}
+                className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md flex items-center justify-center gap-2 "
+              >
+                {" "}
+                <Plus size={18} />{" "}
+                {createDiscountCodeMutation.isPending
+                  ? "Creating..."
+                  : "Create"}{" "}
+              </button>
+              {createDiscountCodeMutation.isError && (
+                <p className="text-red-500 text-sm mt-2">
+                  {(
+                    createDiscountCodeMutation.error as AxiosError<{
+                      message: string;
+                    }>
+                  )?.response?.data?.message || "something went wrong"}
+                </p>
+              )}
             </form>
           </div>
         </div>
       )}
+
+
+      {
+        showDeleteModal && selectedDiscount  && <DeleteDiscountModal
+        
+        discount={selectedDiscount} onClose={()=>setShowDeleteModal} onConfirm={deleteDiscountCodeMutation.mutate(selectedDiscount?.id)}
+        />
+      }
     </div>
   );
 };
