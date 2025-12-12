@@ -16,7 +16,7 @@ const CustomProperties = ({ control, errors }: any) => {
   const [newValue, setNewValue] = useState("");
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "custom_specification",
+name: "custom_properties",
   });
 
   return (
@@ -33,7 +33,7 @@ const CustomProperties = ({ control, errors }: any) => {
               field.onChange(properties);
             }, [properties]);
 
-            const addProperty = (index: number) => {
+            const addProperty = () => {
               if (!newLabel.trim()) return;
               setProperties([...properties, { label: newLabel, values: [] }]);
               setNewValue("");
@@ -120,7 +120,7 @@ const CustomProperties = ({ control, errors }: any) => {
                     <button
                       type="button"
                       className="px-3 py-1 bg-blue-500 text-white rounded-md"
-                      onClick={() => addProperty}
+                      onClick={addProperty}
                     >
                       <Plus size={18} /> Add
                     </button>

@@ -18,7 +18,7 @@ const ColorSpecification = ({ control, errors }: any) => {
         {fields.map((item, index) => (
           <div key={item.id} className="flex gap-2 items-center">
             <Controller
-              name={`custom_specification.${index}`}
+              name={`custom_specification.${index}.name`}
               control={control}
               rules={{
                 required: "Specification name is required",

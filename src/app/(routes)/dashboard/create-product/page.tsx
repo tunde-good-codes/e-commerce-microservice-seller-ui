@@ -310,9 +310,9 @@ const Page = () => {
                 <p className="text-red-500">Failed to load categories</p>
               ) : (
                 <Controller
-                  name="category"
+                  name="categories"
                   control={control}
-                  rules={{ required: "category is required" }}
+                  rules={{ required: "categories is required" }}
                   render={({ field }) => (
                     <select
                       {...field}
@@ -335,9 +335,9 @@ const Page = () => {
                 />
               )}
 
-              {errors.category && (
+              {errors.categories && (
                 <p className="text-red-500 text-sm mt-1">
-                  {String(errors.category.message)}
+                  {String(errors.categories.message)}
                 </p>
               )}
 
@@ -350,9 +350,9 @@ const Page = () => {
                 </label>
 
                 <Controller
-                  name="subCategory"
+                  name="subCategories"
                   control={control}
-                  rules={{ required: "Sub category is required" }}
+                  rules={{ required: "Sub Categories is required" }}
                   render={({ field }) => (
                     <select
                       {...field}
@@ -374,9 +374,9 @@ const Page = () => {
                   )}
                 />
 
-                {errors.subCategory && (
+                {errors.subCategories && (
                   <p className="text-red-500 text-sm mt-1">
-                    {String(errors.subCategory.message)}
+                    {String(errors.subCategories.message)}
                   </p>
                 )}
               </div>
@@ -455,7 +455,11 @@ const Page = () => {
               </div>
 
               <div className="mt-2">
-                <SizeSelector error={errors} control={control} />
+                <SizeSelector
+                  error={errors.sizes?.message}
+                  control={control}
+                  name="sizes"
+                />
 
                 {errors.stock && (
                   <p className="text-red-500 text-sm mt-1">
@@ -481,7 +485,7 @@ const Page = () => {
                         key={code.id}
                         type="button"
                         className={` px-3 py-1 rounded-md text-sm font-semibold border ${
-                          watch("discountCode").includes(code?.id)
+                          (watch("discountCode") || []).includes(code.id)
                             ? "bg-blue-600 text-white border-blue-600"
                             : "bg-gray-800 text-gray-300 border-gray-600 hover:text-gray-700 "
                         } `}
