@@ -350,16 +350,16 @@ const Page = () => {
                 </label>
 
                 <Controller
-                  name="category"
+                  name="subCategory"
                   control={control}
-                  rules={{ required: "category is required" }}
+                  rules={{ required: "Sub category is required" }}
                   render={({ field }) => (
                     <select
                       {...field}
                       className="w-full border outline-none border-gray-700 bg-transparent"
                     >
                       <option value="" className="bg-black">
-                        Select Category
+                        Select Sub Category
                       </option>
                       {subCategories.map((subCat: string) => (
                         <option

@@ -15,12 +15,18 @@ const roboto = Roboto({
   subsets: ["latin"],
   weight: ["100", "300", "400", "500", "700", "900"],
   variable: "--font-roboto",
+  preload: true, // Ensure fonts are preloaded
+  fallback: ['system-ui', 'arial'], // Add fallback fonts
 });
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-poppins",
+
+  preload: true, // Ensure fonts are preloaded
+  fallback: ['system-ui', 'arial'], // Add fallback fonts
+  
 });
 export default function RootLayout({
   children,

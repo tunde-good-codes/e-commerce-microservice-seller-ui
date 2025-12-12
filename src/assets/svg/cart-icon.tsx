@@ -10,7 +10,7 @@ export const CartIcon = () => {
       <path
         d="M16 8V6C16 4.9 15.1 4 14 4H10C8.9 4 8 4.9 8 6V8M5 8H19L20 21H4L5 8Z"
         stroke="currentColor"
-        stroke-width="1.5"
+        strokeWidth="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />

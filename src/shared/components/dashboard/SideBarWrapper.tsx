@@ -86,7 +86,7 @@ const SideBarWrapper = () => {
               <SideBarItem
                 title="payment"
                 icon={<Payment fill={getIconColor("/payment")} />}
-                href="dashboard/payment"
+                href="/dashboard/payment"
                 isActive={activeSideBar === "/dashboard/payment"}
               />
             </SideBarMenu>
@@ -99,7 +99,7 @@ const SideBarWrapper = () => {
                     color={getIconColor("dashboard/create-product")}
                   />
                 }
-                href="dashboard/create-product"
+                href="/dashboard/create-product"
                 isActive={activeSideBar === "dashboard/create-product"}
               />
               <SideBarItem
@@ -110,7 +110,7 @@ const SideBarWrapper = () => {
                     color={getIconColor("dashboard/all-product")}
                   />
                 }
-                href="dashboard/all-product"
+                href="/dashboard/all-product"
                 isActive={activeSideBar === "dashboard/all-product"}
               />
             </SideBarMenu>
@@ -124,7 +124,7 @@ const SideBarWrapper = () => {
                     color={getIconColor("dashboard/create-event")}
                   />
                 }
-                href="dashboard/create-event"
+                href="/dashboard/create-event"
                 isActive={activeSideBar === "dashboard/create-event"}
               />
               <SideBarItem
@@ -135,7 +135,7 @@ const SideBarWrapper = () => {
                     color={getIconColor("dashboard/all-events")}
                   />
                 }
-                href="dashboard/all-events"
+                href="/dashboard/all-events"
                 isActive={activeSideBar === "dashboard/all-events"}
               />
             </SideBarMenu>
@@ -146,7 +146,7 @@ const SideBarWrapper = () => {
                 icon={
                   <Mail size={20} color={getIconColor("dashboard/inbox")} />
                 }
-                href="dashboard/inbox"
+                href="/dashboard/inbox"
                 isActive={activeSideBar === "dashboard/inbox"}
               />
               <SideBarItem
@@ -157,7 +157,7 @@ const SideBarWrapper = () => {
                     color={getIconColor("dashboard/settings")}
                   />
                 }
-                href="dashboard/settings"
+                href="/dashboard/settings"
                 isActive={activeSideBar === "dashboard/settings"}
               />
 
@@ -169,7 +169,7 @@ const SideBarWrapper = () => {
                     color={getIconColor("dashboard/notifications")}
                   />
                 }
-                href="dashboard/notifications"
+                href="/dashboard/notifications"
                 isActive={activeSideBar === "dashboard/notifications"}
               />
             </SideBarMenu>
@@ -183,7 +183,7 @@ const SideBarWrapper = () => {
                     color={getIconColor("dashboard/discount-codes")}
                   />
                 }
-                href="dashboard/discount-codes"
+                href="/dashboard/discount-codes"
                 isActive={activeSideBar === "dashboard/inbox"}
               />
               <SideBarItem
@@ -191,7 +191,7 @@ const SideBarWrapper = () => {
                 icon={
                   <LogOut size={20} color={getIconColor("dashboard/logout")} />
                 }
-                href="dashboard/logout"
+                href="/dashboard/logout"
                 isActive={activeSideBar === "dashboard/logout"}
               />
             </SideBarMenu>
