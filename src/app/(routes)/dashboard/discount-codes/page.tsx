@@ -2,7 +2,7 @@
 import DeleteDiscountModal from "@/shared/components/dashboard/modals/deleteDiscountModals";
 import Input from "@/shared/components/input/Input";
 import axiosInstance from "@/utils/axiosInstance";
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery,useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { table } from "console";
 import { ChevronRight, Plus, Trash, X } from "lucide-react";
@@ -15,6 +15,7 @@ const DiscountCodes = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedDiscount, setSelectedDiscount] = useState<any>();
+const queryClient = useQueryClient();
 
   const {
     register,
@@ -35,7 +36,7 @@ const DiscountCodes = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["shop_discounts"],
+    queryKey: ["shop-discounts"],
     queryFn: async () => {
       try {
         const res = await axiosInstance.get("/product/get-discount-codes");

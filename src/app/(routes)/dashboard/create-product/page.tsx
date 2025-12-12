@@ -29,32 +29,50 @@ const Page = () => {
 
   const onSubmit = (data: any) => {};
 
-  const handleImageChange = (file: File | null, index: number) => {
-    const updatedImages = [...images];
-    updatedImages[index] = file;
+  const convertToBase64 = (file: File) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
-    if (index === images.length - 1 && images.length < 8) {
-      updatedImages.push(null);
+  const handleImageChange = async (file: File | null, index: number) => {
+    if (!file) return;
+    try {
+      const fileName = await convertToBase64(file);
+      const response = await axiosInstance.post(
+        "/product/upload-product-image",
+        fileName
+      );
+      const updatedImages = [...images];
+      updatedImages[index] = response.data.file_url;
+      if (index === images.length - 1 && updatedImages.length < 8) {
+        updatedImages.push(null);
+      }
+      setImages(updatedImages);
+      setValue("images", updatedImages);
+    } catch (e) {
+      console.log(e);
     }
-    setImages(updatedImages);
-    setValue("images", updatedImages);
   };
   const handleRemoveImage = (index: number) => {
-    setImages((prevImages) => {
-      let updatedImages = [...prevImages];
-
-      if (index === -1) {
-        updatedImages[0] = null;
-      } else {
-        updatedImages.splice(index, 1);
+    try {
+      const updatedImages = [...images];
+      const imageToDelete = updatedImages[index];
+      if (imageToDelete && typeof imageToDelete === "string") {
       }
+
+      updatedImages.splice(index, 1);
       if (!updatedImages.includes(null) && updatedImages.length < 8) {
         updatedImages.push(null);
       }
-
-      return updatedImages;
-    });
-    setValue("images", images);
+      setImages(updatedImages);
+      setValue("images", updatedImages);
+    } catch (e) {
+      console.log(e);
+    }
   };
   const handleSaveDraft = () => {};
 
