@@ -6,9 +6,10 @@ import ImagePlaceHolder from "@/shared/components/dashboard/image-placeholder/Pa
 import RichTextEditor from "@/shared/components/dashboard/rich-text-editor";
 import SizeSelector from "@/shared/components/dashboard/size-selector";
 import Input from "@/shared/components/input/Input";
+import { enhancements } from "@/utils/AiEnhancement";
 import axiosInstance from "@/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight, X } from "lucide-react";
+import { ChevronRight, Wand, X } from "lucide-react";
 import Image from "next/image";
 import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -25,7 +26,9 @@ const Page = () => {
   const [selectedImage, setSelectedImage] = useState("");
   const [pictureUploadLoader, setPictureUploadLoader] = useState(false);
   const [images, setImages] = useState<ImageData[]>([null]);
+  const [activeEffect, setActiveEffect] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   const {
     register,
@@ -110,6 +113,20 @@ const Page = () => {
     }
   };
 
+  const applyTransformation = async (transformation: string) => {
+    if (!selectedImage || processing) return;
+    setProcessing(true);
+    setActiveEffect(transformation);
+
+    try {
+      const transformationUrl = `${selectedImage}?tr=${transformation}`;
+      setSelectedImage(transformationUrl);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setProcessing(false);
+    }
+  };
   const handleSaveDraft = () => {};
 
   const { data, isLoading, isError } = useQuery({
@@ -224,7 +241,7 @@ const Page = () => {
                   cols={10}
                   label="Short Description * (Max 150 words)"
                   placeholder="Enter product description for quick view"
-                  {...register("description", {
+                  {...register("short_description", {
                     required: "Description is required",
                     validate: (value) => {
                       const wordCount = value.trim().split(/\s+/).length;
@@ -576,7 +593,22 @@ const Page = () => {
                 <h3 className="text-white font-semibold  text-sm ">
                   Ai Enhancement
                 </h3>
-                <div className="grid grid-cols-2 gap-3 mx-h-[250px] overflow-y-auto  "></div>
+                <div className="grid grid-cols-2 gap-3 mx-h-[250px] overflow-y-auto  ">
+                  {enhancements.map(({ label, effect }) => (
+                    <button
+                      key={effect}
+                      className={`p-2 rounded-md gap-2 flex items-center ${
+                        activeEffect === effect
+                          ? "bg-blue-600  text-white"
+                          : "bg-gray-700 hover:bg-gray-600"
+                      }  `}
+                      onClick={() => applyTransformation(effect)}
+                      disabled={processing}
+                    >
+                      <Wand size={18} /> {label}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
