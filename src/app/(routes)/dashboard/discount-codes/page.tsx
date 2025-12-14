@@ -28,7 +28,7 @@ const queryClient = useQueryClient();
       public_name: "",
       discountType: "percentage",
       discountValue: "",
-      discountCode: "",
+      discountCodes: "",
     },
   });
   const {
@@ -237,7 +237,7 @@ const queryClient = useQueryClient();
               <div className="mt-2">
                 <Input
                   label="Discount Code"
-                  {...register("discountCode", {
+                  {...register("discountCodes", {
                     required: "discount Code is required",
                   })}
                 />

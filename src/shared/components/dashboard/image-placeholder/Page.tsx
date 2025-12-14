@@ -66,7 +66,7 @@ const ImagePlaceHolder = ({
             type="button"
             onClick={() => {
               setOpenImageModal(true);
-              setSelectedImage(images[index].file_url);
+              setSelectedImage(images[index].url);
             }}
             disabled={pictureUploadingLoader}
             className="absolute top-3 right-[70px] p-2 rounded! bg-blue-500 shadow-lg  "

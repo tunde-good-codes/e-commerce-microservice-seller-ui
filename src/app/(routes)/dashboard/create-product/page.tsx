@@ -11,8 +11,10 @@ import axiosInstance from "@/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, Wand, X } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 // Define the image data type
 type ImageData = {
@@ -29,6 +31,7 @@ const Page = () => {
   const [activeEffect, setActiveEffect] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -39,7 +42,17 @@ const Page = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data: any) => {};
+  const onSubmit = async (data: any) => {
+    try {
+      setLoading(true);
+      await axiosInstance.post(`/product/create-product`, data);
+      router.push("/dashboard/all-products");
+    } catch (e:any) {
+      toast.error(e?.data?.message)
+    }finally{
+      setLoading(false)
+    }
+  };
 
   const convertToBase64 = (file: File) => {
     return new Promise((resolve, reject) => {
@@ -369,7 +382,7 @@ const Page = () => {
                 <p className="text-red-500">Failed to load categories</p>
               ) : (
                 <Controller
-                  name="categories"
+                  name="category"
                   control={control}
                   rules={{ required: "categories is required" }}
                   render={({ field }) => (
@@ -409,7 +422,7 @@ const Page = () => {
                 </label>
 
                 <Controller
-                  name="subCategories"
+                  name="subCategory"
                   control={control}
                   rules={{ required: "Sub Categories is required" }}
                   render={({ field }) => (
@@ -478,7 +491,7 @@ const Page = () => {
               </div>
 
               <div className="mt-4">
-                <Input label="video url" placeholder="https://youtube.com" />
+                <Input label="video url" placeholder="https://youtube.com"  {...register("video_ur")} />
                 {errors.video_url && (
                   <p className="text-red-500 text-sm mt-1">
                     {String(errors.video_url.message)}
@@ -542,14 +555,14 @@ const Page = () => {
                     {discount_codes.map((code: any) => (
                       <button
                         key={code.id}
-                        type="button"
+                        type="submit"
                         className={` px-3 py-1 rounded-md text-sm font-semibold border ${
-                          (watch("discountCode") || []).includes(code.id)
+                          (watch("discountCodes") || []).includes(code.id)
                             ? "bg-blue-600 text-white border-blue-600"
                             : "bg-gray-800 text-gray-300 border-gray-600 hover:text-gray-700 "
                         } `}
                         onClick={() => {
-                          const currentSelection = watch("discountCode") || [];
+                          const currentSelection = watch("discountCodes") || [];
                           const updatedSelection = currentSelection.includes(
                             code.id
                           )
@@ -557,7 +570,7 @@ const Page = () => {
                                 (id: string) => id !== code.id
                               )
                             : [...currentSelection, code.id];
-                          setValue("discountCode", updatedSelection);
+                          setValue("discountCodes", updatedSelection);
                         }}
                       >
                         {code?.public_name} ({code.discountValue}{" "}
