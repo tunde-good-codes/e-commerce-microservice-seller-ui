@@ -4,6 +4,14 @@ const nextConfig = {
   experimental: {
     optimizeCss: false, // Try disabling CSS optimization
   },
+
+  images:{
+    remotePatterns:[
+      {
+        "hostname":"ik.imagekit.io"
+      }
+    ]
+  }
 };
 
 module.exports = nextConfig;

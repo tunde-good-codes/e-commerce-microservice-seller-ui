@@ -1,5 +1,4 @@
 "use client";
-import { url } from "inspector";
 import { Pencil, WandSparkles, X } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -11,6 +10,9 @@ interface Props {
   defaultImage?: string | null;
   index?: any;
   setOpenImageModal: (openImage: boolean) => void;
+  setSelectedImage: (e: string) => void;
+  images: any;
+  pictureUploadingLoader: boolean;
 }
 const ImagePlaceHolder = ({
   size,
@@ -20,6 +22,9 @@ const ImagePlaceHolder = ({
   defaultImage = null,
   index = null,
   setOpenImageModal,
+  setSelectedImage,
+  pictureUploadingLoader,
+  images,
 }: Props) => {
   const [imagePreview, setImagePreview] = useState<string | null>(defaultImage);
 
@@ -49,29 +54,39 @@ const ImagePlaceHolder = ({
           {" "}
           <button
             type="button"
-            onClick={() => onRemove?.(index!)}
+            disabled={pictureUploadingLoader}
+            onClick={() => {
+              onRemove?.(index!);
+            }}
             className="absolute top-3 right-3 p-2 rounded! bg-red-600 shadow-lg  "
           >
             <X size={16} />
           </button>
           <button
             type="button"
-            onClick={() => setOpenImageModal(true)}
+            onClick={() => {
+              setOpenImageModal(true);
+              setSelectedImage(images[index].file_url);
+            }}
+            disabled={pictureUploadingLoader}
             className="absolute top-3 right-[70px] p-2 rounded! bg-blue-500 shadow-lg  "
           >
             <WandSparkles size={16} />
           </button>
         </>
       ) : (
-        <label className="absolute top-3 right-3 p-2 rounded! bg-slate-700 shadow-lg cursor-pointer  " htmlFor={`image-upload-${index}`} >
+        <label
+          className="absolute top-3 right-3 p-2 rounded! bg-slate-700 shadow-lg cursor-pointer  "
+          htmlFor={`image-upload-${index}`}
+        >
           <Pencil size={16} />
         </label>
       )}
 
       {imagePreview ? (
         <Image
-        width={400}
-        height={300}
+          width={400}
+          height={300}
           src={imagePreview}
           alt="uploaded"
           className="w-full h-full object-cover rounded-lg "

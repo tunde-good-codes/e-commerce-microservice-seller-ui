@@ -8,14 +8,23 @@ import SizeSelector from "@/shared/components/dashboard/size-selector";
 import Input from "@/shared/components/input/Input";
 import axiosInstance from "@/utils/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, X } from "lucide-react";
+import Image from "next/image";
 import React, { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
+// Define the image data type
+type ImageData = {
+  url: string;
+  fileId: string;
+  file?: File; // Optional, for preview before upload
+} | null;
 const Page = () => {
   const [openImageModal, setOpenImageModal] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const [images, setImages] = useState<(File | null)[]>([null]);
+  const [selectedImage, setSelectedImage] = useState("");
+  const [pictureUploadLoader, setPictureUploadLoader] = useState(false);
+  const [images, setImages] = useState<ImageData[]>([null]);
   const [loading, setLoading] = useState(false);
 
   const {
@@ -37,43 +46,70 @@ const Page = () => {
       reader.onerror = (error) => reject(error);
     });
   };
-
   const handleImageChange = async (file: File | null, index: number) => {
     if (!file) return;
+
     try {
-      const fileName = await convertToBase64(file);
+      setPictureUploadLoader(true);
+      const formData = new FormData();
+      formData.append("image", file);
+
       const response = await axiosInstance.post(
         "/product/upload-product-image",
-        fileName
+        formData, // ✅ Fixed - send directly
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
+
       const updatedImages = [...images];
-      updatedImages[index] = response.data.file_url;
+      // ✅ Store both URL and fileId as an object
+      updatedImages[index] = {
+        url: response.data.file_url,
+        fileId: response.data.fileId,
+      };
+
       if (index === images.length - 1 && updatedImages.length < 8) {
         updatedImages.push(null);
       }
+
       setImages(updatedImages);
       setValue("images", updatedImages);
     } catch (e) {
-      console.log(e);
+      console.error(e);
+    } finally {
+      setPictureUploadLoader(false);
     }
   };
-  const handleRemoveImage = (index: number) => {
+  const handleRemoveImage = async (index: number) => {
     try {
       const updatedImages = [...images];
       const imageToDelete = updatedImages[index];
-      if (imageToDelete && typeof imageToDelete === "string") {
+
+      // ✅ Check if image exists and has fileId
+      if (imageToDelete && imageToDelete.fileId) {
+        await axiosInstance.delete("/product/delete-product-image", {
+          data: {
+            fileId: imageToDelete.fileId,
+          },
+        });
       }
 
       updatedImages.splice(index, 1);
+
       if (!updatedImages.includes(null) && updatedImages.length < 8) {
         updatedImages.push(null);
       }
+
       setImages(updatedImages);
       setValue("images", updatedImages);
     } catch (e) {
-      console.log(e);
+      console.error("Error removing image:", e);
     }
   };
+
   const handleSaveDraft = () => {};
 
   const { data, isLoading, isError } = useQuery({
@@ -140,6 +176,9 @@ const Page = () => {
               size="765 x 780"
               small={false}
               index={0}
+              images={images}
+              pictureUploadingLoader={pictureUploadLoader}
+              setSelectedImage={setSelectedImage}
               onImageChange={handleImageChange}
               onRemove={handleRemoveImage}
             />
@@ -148,9 +187,12 @@ const Page = () => {
           <div className="grid grid-cols-2 gap-3 mt-4 ">
             {images.slice(1).map((_, index) => (
               <ImagePlaceHolder
+                setSelectedImage={setSelectedImage}
+                images={images}
                 setOpenImageModal={setOpenImageModal}
                 size="765 x 780"
                 small
+                pictureUploadingLoader={pictureUploadLoader}
                 key={index}
                 index={index + 1}
                 onImageChange={handleImageChange}
@@ -512,6 +554,34 @@ const Page = () => {
           </div>
         </div>
       </div>
+
+      {openImageModal && (
+        <div className="fixed top-0 left-0 h-full w-full flex items-center justify-center bg-black bg-opacity-60 z-index-60 ">
+          <div className="bg-gray-800 p-6 rounded-lg w-[450px] text-white ">
+            <div className="flex justify-between items-center pb-3 mb-4 ">
+              <h2 className="font-semibold text-lg ">Enhance Product Image</h2>
+              <X
+                size={20}
+                className="cursor-pointer"
+                onClick={() => setOpenImageModal(!openImageModal)}
+              />
+            </div>
+
+            <div className="w-full h-[250px] rounded-md overflow-hidden border border-gray-600 ">
+              <Image src={selectedImage} alt="product-image" layout="fill" />
+            </div>
+
+            {selectedImage && (
+              <div className="mt-4 space-y-2 ">
+                <h3 className="text-white font-semibold  text-sm ">
+                  Ai Enhancement
+                </h3>
+                <div className="grid grid-cols-2 gap-3 mx-h-[250px] overflow-y-auto  "></div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="mt-3 flex justify-end gap-3 ">
         {isChanged && (
