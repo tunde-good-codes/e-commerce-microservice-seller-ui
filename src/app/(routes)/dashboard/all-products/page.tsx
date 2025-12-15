@@ -18,13 +18,25 @@ import {
   ChevronRight,
 } from "lucide-react";
 import axiosInstance from "@/utils/axiosInstance";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import DeleteConfirmationModal from "@/shared/modals/delete-confirmation-modal/DeleteConfirmationModal";
 
 const fetchProducts = async () => {
   const res = await axiosInstance.get("/product/get-shop-product");
+  return res.data.products;
+};
+const deleteProducts = async (productId: string) => {
+  const res = await axiosInstance.delete(
+    `/product/delete-product/${productId}`
+  );
+  return res.data.products;
+};
+const restoreProducts = async (productId: string) => {
+  const res = await axiosInstance.put(
+    `/product/restore-product/${productId}`
+  );
   return res.data.products;
 };
 const ProductLists = () => {
@@ -47,6 +59,25 @@ const ProductLists = () => {
     setShowDeleteModal(true);
   };
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteProducts,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["shop=products"],
+      });
+      setShowDeleteModal(false);
+    },
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: restoreProducts,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["shop=products"],
+      });
+      setShowDeleteModal(false);
+    },
+  });
   const columns = useMemo(
     () => [
       {
@@ -233,7 +264,7 @@ const ProductLists = () => {
             product={selectedProduct}
             onClose={() => setShowDeleteModal(false)}
             onConfirm={() =>
-              defaultShouldDehydrateMutation.mutate(selectedProduct?.id)
+              deleteMutation.mutate(selectedProduct?.id)
             }
             onRestore={() => restoreMutation.mutate(selectedProduct?.id)}
           />
